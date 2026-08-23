@@ -1,9 +1,0 @@
-    private static final String GITHUB_TOKEN = "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"; // Token'ınızı buraya yazın
-    private static final String OWNER        = "ce-isakatirci";                  // GitHub kullanıcı adınız
-    private static final String REPO         = "23082026";                       // Hedef repo adı
-    private static final String BRANCH       = "main";                             // Branch adı
-    private static final String LOCAL_FOLDER = "C:\\Users\\U0102292\\encode\\output_parts";  // Gönderilecek yerel klasör
-    private static final String COMMIT_MSG   = "Klasor senkronize edildi";         // Commit mesajı
-    private static final int    MAX_RETRY    = 3;           // 503/429 için max tekrar deneme
-    private static final long   BASE_DELAY_MS = 2000;       // İlk bekleme (exponential backoff)
-    // ═══════════════════════════════════════════
