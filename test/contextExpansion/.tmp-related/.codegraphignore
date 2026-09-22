@@ -1,0 +1,8 @@
+# PR context expansion — denylist mirror
+node_modules/**
+target/**
+dist/**
+out/**
+.git/**
+.idea/**
+**/*.sql
