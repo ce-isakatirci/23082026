@@ -1,0 +1,4 @@
+- `#### Diff` = changed files; bulgular buradan.
+- Related `#### File (related context, read-only)` = Diff doğrulama. Nitpick yok.
+- `node_modules` / `target` / `dist` / `out` / `.git` path’e bulgu yok.
+- **Unresolved symbols** listesi varsa: i18n/DTO/API spekülasyonu yok (repo dışı consumer olabilir).
