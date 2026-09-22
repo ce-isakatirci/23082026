@@ -1,0 +1,826 @@
+{
+	"name": "ykb-pr-reviewer-extended",
+	"displayName": "YKB PR Reviewer Extended",
+	"description": "Bitbucket Pull Request'lerini Superpowers skill rubric ile Copilot uzerinden inceler; sonucu workspace root'ta review-*.md olarak yazar",
+	"version": "1.7.21",
+	"publisher": "ykb",
+	"icon": "prreviewer.png",
+	"engines": {
+		"vscode": "^1.90.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"activationEvents": [
+		"onStartupFinished",
+		"onView:ykbPrReviewerExtended.settings",
+		"onView:ykbPrReviewerExtended.bulkDevReview",
+		"onView:ykbPrReviewerExtended.codeReview",
+		"onView:ykbPrReviewerExtended.ocrReview",
+		"onView:ykbPrReviewerExtended.crgReview",
+		"onView:ykbPrReviewerExtended.praReview",
+		"onView:ykbPrReviewerExtended.myPrs",
+		"onView:ykbPrReviewerExtended.inboxPrs",
+		"onView:ykbPrReviewerExtended.repoPrs"
+	],
+	"extensionDependencies": [],
+	"main": "./out/extension.js",
+	"contributes": {
+		"viewsContainers": {
+			"activitybar": [
+				{
+					"id": "ykbPrReviewerExtended",
+					"title": "YKB PR Review",
+					"icon": "media/activitybar.svg"
+				}
+			]
+		},
+		"views": {
+			"ykbPrReviewerExtended": [
+				{
+					"id": "ykbPrReviewerExtended.settings",
+					"name": "Ayarlar",
+					"type": "webview",
+					"visibility": "collapsed"
+				},
+				{
+					"id": "ykbPrReviewerExtended.bulkDevReview",
+					"name": "Dev Bulk Review",
+					"type": "webview",
+					"visibility": "collapsed"
+				},
+				{
+					"id": "ykbPrReviewerExtended.codeReview",
+					"name": "Code Review",
+					"type": "webview",
+					"visibility": "collapsed"
+				},
+				{
+					"id": "ykbPrReviewerExtended.ocrReview",
+					"name": "OCR Review",
+					"type": "webview",
+					"visibility": "collapsed"
+				},
+				{
+					"id": "ykbPrReviewerExtended.crgReview",
+					"name": "CRG Review",
+					"type": "webview",
+					"visibility": "collapsed"
+				},
+				{
+					"id": "ykbPrReviewerExtended.praReview",
+					"name": "PR Agent",
+					"type": "webview",
+					"visibility": "collapsed"
+				},
+				{
+					"id": "ykbPrReviewerExtended.myPrs",
+					"name": "PR'larim",
+					"type": "webview",
+					"visibility": "collapsed"
+				},
+				{
+					"id": "ykbPrReviewerExtended.inboxPrs",
+					"name": "Bana Acilan PR'lar",
+					"type": "webview",
+					"visibility": "collapsed"
+				},
+				{
+					"id": "ykbPrReviewerExtended.repoPrs",
+					"name": "Repo PR'lari",
+					"type": "webview",
+					"visibility": "collapsed"
+				}
+			]
+		},
+		"viewsWelcome": [
+			{
+				"view": "ykbPrReviewerExtended.myPrs",
+				"contents": "Kendi acik PR'larin burada listelenir.\n[Token kaydet](command:ykbPrReviewerExtended.saveToken)\n[Yenile](command:ykbPrReviewerExtended.refreshMyPrs)"
+			},
+			{
+				"view": "ykbPrReviewerExtended.inboxPrs",
+				"contents": "Reviewer olarak atandigin PR'lar burada listelenir.\n[Token kaydet](command:ykbPrReviewerExtended.saveToken)\n[Yenile](command:ykbPrReviewerExtended.refreshInboxPrs)"
+			},
+			{
+				"view": "ykbPrReviewerExtended.repoPrs",
+				"contents": "Bir repo sec veya search yap; acik PR'lar listelenir.\n[Repo ara](command:ykbPrReviewerExtended.searchRepoPrs)\n[Repo sec](command:ykbPrReviewerExtended.pickRepo)"
+			}
+		],
+		"commands": [
+			{
+				"command": "ykbPrReviewerExtended.reviewPR",
+				"title": "PR Review Basalt",
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.clearCredentials",
+				"title": "Bitbucket Token'i Temizle",
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.saveToken",
+				"title": "Bitbucket Token Kaydet",
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.listModels",
+				"title": "Kullanilabilir Modelleri Listele",
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.listInboxPRs",
+				"title": "Onayimi Bekleyen PR'lari Listele",
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.toggleAutoReview",
+				"title": "Otomatik Review Ac/Kapat",
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.runBulkDevReview",
+				"title": "Dev Bulk Review Calistir",
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.runCodeReview",
+				"title": "Code Review Calistir",
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.runOcrReview",
+				"title": "OCR Review Calistir",
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.runCrgReview",
+				"title": "CRG Review Calistir",
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.runPraReview",
+				"title": "PR Agent Calistir",
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.runAutoReviewNow",
+				"title": "Otomatik Review'u Simdi Calistir",
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.reviewFromTree",
+				"title": "Review Et",
+				"icon": {
+					"light": "media/icon-review.svg",
+					"dark": "media/icon-review.svg"
+				},
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.commentFromTree",
+				"title": "PR'a Comment At",
+				"icon": {
+					"light": "media/icon-comment.svg",
+					"dark": "media/icon-comment.svg"
+				},
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.previewSelected",
+				"title": "PR Preview",
+				"icon": {
+					"light": "media/icon-preview.svg",
+					"dark": "media/icon-preview.svg"
+				},
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.approveFromTree",
+				"title": "PR Approve",
+				"icon": {
+					"light": "media/icon-approve.svg",
+					"dark": "media/icon-approve.svg"
+				},
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.unapproveFromTree",
+				"title": "PR Unapprove",
+				"icon": {
+					"light": "media/icon-unapprove.svg",
+					"dark": "media/icon-unapprove.svg"
+				},
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.cancelSelection",
+				"title": "Secimi Iptal",
+				"icon": "$(close)",
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.refreshMyPrs",
+				"title": "Yenile",
+				"icon": "$(refresh)",
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.refreshInboxPrs",
+				"title": "Yenile",
+				"icon": "$(refresh)",
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.refreshRepoPrs",
+				"title": "Yenile",
+				"icon": "$(refresh)",
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.searchRepoPrs",
+				"title": "PR / Repo Ara",
+				"icon": "$(search)",
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.pickRepo",
+				"title": "Repo Sec",
+				"icon": "$(repo)",
+				"category": "YKB PR Reviewer Extended"
+			},
+			{
+				"command": "ykbPrReviewerExtended.focusSidebar",
+				"title": "Sol Paneli Ac",
+				"category": "YKB PR Reviewer Extended"
+			}
+		],
+		"menus": {
+			"commandPalette": [
+				{
+					"command": "ykbPrReviewerExtended.reviewFromTree",
+					"when": "ykbPrReviewerExtended.hasPrSelection"
+				},
+				{
+					"command": "ykbPrReviewerExtended.commentFromTree",
+					"when": "ykbPrReviewerExtended.hasPrSelection"
+				},
+				{
+					"command": "ykbPrReviewerExtended.previewSelected",
+					"when": "ykbPrReviewerExtended.hasPrSelection"
+				},
+				{
+					"command": "ykbPrReviewerExtended.approveFromTree",
+					"when": "ykbPrReviewerExtended.hasPrSelection"
+				},
+				{
+					"command": "ykbPrReviewerExtended.unapproveFromTree",
+					"when": "ykbPrReviewerExtended.hasPrSelection"
+				},
+				{
+					"command": "ykbPrReviewerExtended.cancelSelection",
+					"when": "ykbPrReviewerExtended.hasPrSelection"
+				}
+			],
+			"view/title": [
+				{
+					"command": "ykbPrReviewerExtended.reviewFromTree",
+					"when": "view =~ /^ykbPrReviewerExtended\\.(myPrs|inboxPrs|repoPrs)$/ && ykbPrReviewerExtended.hasPrSelection",
+					"group": "navigation@0"
+				},
+				{
+					"command": "ykbPrReviewerExtended.commentFromTree",
+					"when": "view =~ /^ykbPrReviewerExtended\\.(myPrs|inboxPrs|repoPrs)$/ && ykbPrReviewerExtended.hasPrSelection",
+					"group": "navigation@1"
+				},
+				{
+					"command": "ykbPrReviewerExtended.previewSelected",
+					"when": "view =~ /^ykbPrReviewerExtended\\.(myPrs|inboxPrs|repoPrs)$/ && ykbPrReviewerExtended.hasPrSelection",
+					"group": "navigation@2"
+				},
+				{
+					"command": "ykbPrReviewerExtended.approveFromTree",
+					"when": "view =~ /^ykbPrReviewerExtended\\.(myPrs|inboxPrs|repoPrs)$/ && ykbPrReviewerExtended.hasPrSelection",
+					"group": "navigation@3"
+				},
+				{
+					"command": "ykbPrReviewerExtended.unapproveFromTree",
+					"when": "view =~ /^ykbPrReviewerExtended\\.(myPrs|inboxPrs|repoPrs)$/ && ykbPrReviewerExtended.hasPrSelection",
+					"group": "navigation@4"
+				},
+				{
+					"command": "ykbPrReviewerExtended.cancelSelection",
+					"when": "view =~ /^ykbPrReviewerExtended\\.(myPrs|inboxPrs|repoPrs)$/ && ykbPrReviewerExtended.hasPrSelection",
+					"group": "navigation@5"
+				},
+				{
+					"command": "ykbPrReviewerExtended.refreshMyPrs",
+					"when": "view == ykbPrReviewerExtended.myPrs",
+					"group": "navigation@9"
+				},
+				{
+					"command": "ykbPrReviewerExtended.refreshInboxPrs",
+					"when": "view == ykbPrReviewerExtended.inboxPrs",
+					"group": "navigation@9"
+				},
+				{
+					"command": "ykbPrReviewerExtended.searchRepoPrs",
+					"when": "view == ykbPrReviewerExtended.repoPrs",
+					"group": "navigation@7"
+				},
+				{
+					"command": "ykbPrReviewerExtended.pickRepo",
+					"when": "view == ykbPrReviewerExtended.repoPrs",
+					"group": "navigation@8"
+				},
+				{
+					"command": "ykbPrReviewerExtended.refreshRepoPrs",
+					"when": "view == ykbPrReviewerExtended.repoPrs",
+					"group": "navigation@9"
+				}
+			]
+		},
+		"configuration": {
+			"title": "YKB PR Reviewer Extended",
+			"properties": {
+				"ykbPrReviewerExtended.baseUrl": {
+					"type": "string",
+					"default": "https://sdlc.yapikredi.com.tr/bitbucket",
+					"description": "Bitbucket Server base URL"
+				},
+				"ykbPrReviewerExtended.token": {
+					"type": "string",
+					"default": "",
+					"markdownDescription": "Bitbucket Personal Access Token. Bos birakilirsa ilk calistirmada sorulur ve guvenli depoya kaydedilir."
+				},
+				"ykbPrReviewerExtended.model": {
+					"type": "string",
+					"default": "gpt-5.4-mini",
+					"markdownDescription": "Kullanilacak Copilot model ID'si veya family adi (`aiIdeAssistant.use` false iken). Sidebar **Ayarlar** view'undaki Copilot model select ile settings.json'a yazilir."
+				},
+				"ykbPrReviewerExtended.extraInstructions": {
+					"type": "string",
+					"default": "",
+					"editPresentation": "multilineText",
+					"markdownDescription": "Her review'a eklenen proje ozel talimatlar. Sidebar **Ayarlar** view'undaki **Ek talimatlar** textarea ile settings.json'a yazilir (blur). Satir basina bir kural yazin. `prompt.includeExtraInstructions` false ise gonderilmez."
+				},
+				"ykbPrReviewerExtended.javaHome": {
+					"type": "string",
+					"default": "",
+					"markdownDescription": "Java home yolu. Bos ise `java.jdt.ls.java.home`, `java.home` veya `JAVA_HOME` settings/env'den okunur."
+				},
+				"ykbPrReviewerExtended.npmPath": {
+					"type": "string",
+					"default": "",
+					"markdownDescription": "npm executable yolu. Bos ise VS Code npm/node ayarlari veya PATH'ten cozumlenir."
+				},
+				"ykbPrReviewerExtended.maxDiffChars": {
+					"type": "number",
+					"default": 8000,
+					"minimum": 0,
+					"description": "Her dosyanin diff metni icin maksimum karakter (chunk icinde). 0 = sinirsiz."
+				},
+				"ykbPrReviewerExtended.maxPromptChars": {
+					"type": "number",
+					"default": 400000,
+					"minimum": 0,
+					"description": "System + user chrome + dosya paketi toplam karakter tavani (0 = sinirsiz). Qwen3.6 262k context ile hizali default; packer dosya atlamaz, hybrid chunk kullanir."
+				},
+				"ykbPrReviewerExtended.maxFileChars": {
+					"type": "number",
+					"default": 2500,
+					"minimum": 0,
+					"description": "Degisen dosyanin tam icerigi icin maksimum karakter; asilirsa truncated isaretlenir. 0 = sinirsiz."
+				},
+				"ykbPrReviewerExtended.contextExpansion.enabled": {
+					"type": "boolean",
+					"default": true,
+					"description": "PR review oncesi repo cache clone + codegraph ile related context ekle."
+				},
+				"ykbPrReviewerExtended.contextExpansion.cacheRoot": {
+					"type": "string",
+					"default": "",
+					"description": "Repo cache kok dizini. Bos ise %USERPROFILE%/repo_review kullanilir."
+				},
+				"ykbPrReviewerExtended.contextExpansion.maxRelatedFiles": {
+					"type": "number",
+					"default": 3,
+					"minimum": 0,
+					"description": "Related context olarak eklenecek maksimum dosya sayisi."
+				},
+				"ykbPrReviewerExtended.contextExpansion.maxRelatedFileChars": {
+					"type": "number",
+					"default": 1500,
+					"minimum": 0,
+					"description": "Related context dosya icerigi karakter tavanı. 0 = sinirsiz."
+				},
+				"ykbPrReviewerExtended.contextExpansion.codegraphTimeoutMs": {
+					"type": "number",
+					"default": 120000,
+					"minimum": 1000,
+					"description": "codegraph init/sync/callers komutlari icin timeout (ms)."
+				},
+				"ykbPrReviewerExtended.contextExpansion.onNoInRepoConsumer": {
+					"type": "string",
+					"default": "suppress-speculative",
+					"enum": [
+						"suppress-speculative",
+						"warn-only",
+						"skip-review"
+					],
+					"description": "Repo icinde consumer bulunamayan symbol'ler icin review davranisi."
+				},
+				"ykbPrReviewerExtended.contextExpansion.deniedPathSegments": {
+					"type": "array",
+					"default": [
+						"node_modules",
+						"target",
+						"dist",
+						"out",
+						".git",
+						"test",
+						"tests",
+						"__tests__"
+					],
+					"items": {
+						"type": "string"
+					},
+					"description": "Related context ve codegraph index disinda birakilacak path segment'leri (unit test dizinleri dahil)."
+				},
+				"ykbPrReviewerExtended.contextExpansion.relatedPathDenylistSegments": {
+					"type": "array",
+					"default": [
+						"batch/sepaincoming",
+						"batch/instantpayments",
+						"batch/instantpaymentsoutgoing",
+						"batch/embargo"
+					],
+					"items": {
+						"type": "string"
+					},
+					"description": "Inquiry PR'larda related context olarak eklenmeyecek batch/parser path segment'leri (changed dosyalar yine review edilir)."
+				},
+				"ykbPrReviewerExtended.findingGate.enabled": {
+					"type": "boolean",
+					"default": true,
+					"description": "LLM review sonrasi FP/oversevere Critical drop/downgrade gate."
+				},
+				"ykbPrReviewerExtended.codeReview.minConfidence": {
+					"type": "number",
+					"default": 80,
+					"minimum": 0,
+					"maximum": 100,
+					"description": "Code Review: bu confidence altindaki bulgu elenir."
+				},
+				"ykbPrReviewerExtended.codeReview.criticalMin": {
+					"type": "number",
+					"default": 90,
+					"minimum": 0,
+					"maximum": 100,
+					"description": "Code Review: bu confidence ve uzeri Critical. minConfidence ile bu deger arasi Important."
+				},
+				"ykbPrReviewerExtended.ocrReview.executablePath": {
+					"type": "string",
+					"default": "",
+					"markdownDescription": "Alibaba Open Code Review CLI yolu (`ocr` / `ocr.cmd`). Bos ise PATH'ten cozumlenir."
+				},
+				"ykbPrReviewerExtended.ocrReview.baseRef": {
+					"type": "string",
+					"default": "origin/dev",
+					"markdownDescription": "OCR `--from` ref (varsayilan `origin/dev`)."
+				},
+				"ykbPrReviewerExtended.ocrReview.timeoutMinutes": {
+					"type": "number",
+					"default": 30,
+					"minimum": 1,
+					"description": "OCR CLI review timeout (dakika)."
+				},
+				"ykbPrReviewerExtended.ocrReview.audience": {
+					"type": "string",
+					"default": "agent",
+					"enum": [
+						"agent",
+						"human"
+					],
+					"description": "OCR `--audience` (agent = temiz JSON stdout)."
+				},
+				"ykbPrReviewerExtended.crgReview.executablePath": {
+					"type": "string",
+					"default": "",
+					"markdownDescription": "tirth8205/code-review-graph CLI yolu (`code-review-graph` / `.cmd`). Bos ise PATH'ten cozumlenir."
+				},
+				"ykbPrReviewerExtended.crgReview.baseRef": {
+					"type": "string",
+					"default": "origin/dev",
+					"markdownDescription": "CRG `detect-changes --base` ref (varsayilan `origin/dev`)."
+				},
+				"ykbPrReviewerExtended.crgReview.timeoutMinutes": {
+					"type": "number",
+					"default": 30,
+					"minimum": 1,
+					"description": "CRG CLI build/update/detect-changes timeout (dakika)."
+				},
+				"ykbPrReviewerExtended.crgReview.maxContextChars": {
+					"type": "number",
+					"default": 120000,
+					"minimum": 10000,
+					"description": "detect-changes stdout'unun LLM prompt'a eklenen max karakter sayisi."
+				},
+				"ykbPrReviewerExtended.prAgentReview.executablePath": {
+					"type": "string",
+					"default": "",
+					"markdownDescription": "The-PR-Agent/pr-agent CLI yolu (`pr-agent` / `pr-agent.cmd`). Bos ise PATH'ten cozumlenir."
+				},
+				"ykbPrReviewerExtended.prAgentReview.baseRef": {
+					"type": "string",
+					"default": "origin/dev",
+					"markdownDescription": "PR Agent `git diff` base ref (varsayilan `origin/dev`)."
+				},
+				"ykbPrReviewerExtended.prAgentReview.timeoutMinutes": {
+					"type": "number",
+					"default": 30,
+					"minimum": 1,
+					"description": "PR Agent CLI review timeout (dakika)."
+				},
+				"ykbPrReviewerExtended.openPreview": {
+					"type": "boolean",
+					"default": true,
+					"description": "Review md dosyasi yazildiktan sonra Markdown Preview ac."
+				},
+				"ykbPrReviewerExtended.autoReview.enabled": {
+					"type": "boolean",
+					"default": false,
+					"description": "Otomatik PR review zamanlayicisini VS Code acilisinda baslat."
+				},
+				"ykbPrReviewerExtended.autoReview.intervalMinutes": {
+					"type": "number",
+					"default": 5,
+					"minimum": 1,
+					"description": "Otomatik review kontrol araligi (dakika)."
+				},
+				"ykbPrReviewerExtended.aiIdeAssistant.use": {
+					"type": "boolean",
+					"default": false,
+					"markdownDescription": "true ise review, mevcut `ai-ide-assistant.providers` listesindeki `enabled: true` kaydi kullanir. false ise Copilot (`ykbPrReviewerExtended.model`)."
+				},
+				"ykbPrReviewerExtended.prompt.temperature": {
+					"type": "number",
+					"default": 0.2,
+					"minimum": 0,
+					"maximum": 2,
+					"description": "IDE assistant (OpenAI-compatible) temperature."
+				},
+				"ykbPrReviewerExtended.prompt.systemRole": {
+					"type": "string",
+					"default": "system",
+					"description": "IDE assistant ilk mesaj role (varsayilan: system)."
+				},
+				"ykbPrReviewerExtended.prompt.userRole": {
+					"type": "string",
+					"default": "user",
+					"description": "IDE assistant ikinci mesaj role (varsayilan: user)."
+				},
+				"ykbPrReviewerExtended.prompt.includeSkills": {
+					"type": "boolean",
+					"default": true,
+					"description": "System prompt'a Superpowers skill metinlerini ekle."
+				},
+				"ykbPrReviewerExtended.prompt.includeSkillsOnFindingsOnly": {
+					"type": "boolean",
+					"default": false,
+					"description": "Multi-chunk findings-only prompt'a skill metinlerini ekle (default kapali; token verimi)."
+				},
+				"ykbPrReviewerExtended.prompt.compactFindingsOnly": {
+					"type": "boolean",
+					"default": true,
+					"description": "Multi-chunk findings-only i>0 chunk'larda kisa kural seti (severity map + denylist); false ise v1 full domain her chunk'ta."
+				},
+				"ykbPrReviewerExtended.prompt.includeLanguageRule": {
+					"type": "boolean",
+					"default": true,
+					"description": "System prompt'a dil kuralini ekle."
+				},
+				"ykbPrReviewerExtended.prompt.includeScopeRule": {
+					"type": "boolean",
+					"default": true,
+					"description": "System prompt'a Diff/File scope kuralini ekle."
+				},
+				"ykbPrReviewerExtended.prompt.includeContextExpansionRule": {
+					"type": "boolean",
+					"default": true,
+					"description": "System prompt'a context expansion (Changed/Related, suppress speculative) kuralini ekle."
+				},
+				"ykbPrReviewerExtended.prompt.includeYkbDomainRules": {
+					"type": "boolean",
+					"default": true,
+					"description": "System prompt'a YKB domain kurallarini ekle."
+				},
+				"ykbPrReviewerExtended.prompt.includeExtraInstructions": {
+					"type": "boolean",
+					"default": true,
+					"description": "System prompt'a extraInstructions bloğunu ekle."
+				},
+				"ykbPrReviewerExtended.prompt.includeEnvironment": {
+					"type": "boolean",
+					"default": false,
+					"description": "System prompt'a javaHome/npmPath ortam blogunu ekle."
+				},
+				"ykbPrReviewerExtended.prompt.includeOutputFormat": {
+					"type": "boolean",
+					"default": true,
+					"description": "System prompt'a cikti formati / findings-only hint ekle."
+				},
+				"ykbPrReviewerExtended.prompt.includeChunkReminder": {
+					"type": "boolean",
+					"default": true,
+					"description": "User mesajinin SONUNA chunk hatirlatmasini ekle (Diff'ten sonra)."
+				},
+				"ykbPrReviewerExtended.prompt.includeFileContents": {
+					"type": "boolean",
+					"default": true,
+					"description": "User mesajina #### File (tam dosya icerigi) ekle. false ise yalnizca Diff gider."
+				},
+				"ykbPrReviewerExtended.prompt.systemPreamble": {
+					"type": "string",
+					"default": "",
+					"editPresentation": "multilineText",
+					"markdownDescription": "Prompt metni. Bos birakilirsa prompt/defaults.json degeri kullanilir."
+				},
+				"ykbPrReviewerExtended.prompt.systemEpilogue": {
+					"type": "string",
+					"default": "",
+					"editPresentation": "multilineText",
+					"markdownDescription": "Prompt metni. Bos birakilirsa prompt/defaults.json degeri kullanilir."
+				},
+				"ykbPrReviewerExtended.ui.fontSizePx": {
+					"type": "number",
+					"default": 12,
+					"minimum": 8,
+					"maximum": 32,
+					"description": "Sidebar PR listesi font-size (px). settings.example.json icinden degistirilir."
+				},
+				"ykbPrReviewerExtended.ui.buttonSizePx": {
+					"type": "number",
+					"default": 24,
+					"minimum": 16,
+					"maximum": 48,
+					"description": "Sidebar aksiyon buton boyutu (px)."
+				},
+				"ykbPrReviewerExtended.ui.iconSizePx": {
+					"type": "number",
+					"default": 16,
+					"minimum": 10,
+					"maximum": 32,
+					"description": "Sidebar buton ici SVG ikon boyutu (px)."
+				},
+				"ykbPrReviewerExtended.ui.paddingPx": {
+					"type": "number",
+					"default": 8,
+					"minimum": 2,
+					"maximum": 24,
+					"description": "Sidebar satir/padding (px)."
+				},
+				"ykbPrReviewerExtended.ui.gapPx": {
+					"type": "number",
+					"default": 4,
+					"minimum": 2,
+					"maximum": 16,
+					"description": "Sidebar satir ici bosluk (px)."
+				},
+				"ykbPrReviewerExtended.ui.radiusPx": {
+					"type": "number",
+					"default": 4,
+					"minimum": 0,
+					"maximum": 16,
+					"description": "Sidebar kosegen radius (px)."
+				},
+				"ykbPrReviewerExtended.prompt.skillUsingSuperpowersHeading": {
+					"type": "string",
+					"default": "",
+					"editPresentation": "multilineText",
+					"markdownDescription": "Prompt metni. Bos birakilirsa prompt/defaults.json degeri kullanilir."
+				},
+				"ykbPrReviewerExtended.prompt.skillRequestingHeading": {
+					"type": "string",
+					"default": "",
+					"editPresentation": "multilineText",
+					"markdownDescription": "Prompt metni. Bos birakilirsa prompt/defaults.json degeri kullanilir."
+				},
+				"ykbPrReviewerExtended.prompt.skillReviewerTemplateHeading": {
+					"type": "string",
+					"default": "",
+					"editPresentation": "multilineText",
+					"markdownDescription": "Prompt metni. Bos birakilirsa prompt/defaults.json degeri kullanilir."
+				},
+				"ykbPrReviewerExtended.prompt.languageRuleHeading": {
+					"type": "string",
+					"default": "",
+					"editPresentation": "multilineText",
+					"markdownDescription": "Prompt metni. Bos birakilirsa prompt/defaults.json degeri kullanilir."
+				},
+				"ykbPrReviewerExtended.prompt.scopeRuleHeading": {
+					"type": "string",
+					"default": "",
+					"editPresentation": "multilineText",
+					"markdownDescription": "Prompt metni. Bos birakilirsa prompt/defaults.json degeri kullanilir."
+				},
+				"ykbPrReviewerExtended.prompt.extraInstructionsHeading": {
+					"type": "string",
+					"default": "",
+					"editPresentation": "multilineText",
+					"markdownDescription": "Prompt metni. Bos birakilirsa prompt/defaults.json degeri kullanilir."
+				},
+				"ykbPrReviewerExtended.prompt.environmentHeading": {
+					"type": "string",
+					"default": "",
+					"editPresentation": "multilineText",
+					"markdownDescription": "Prompt metni. Bos birakilirsa prompt/defaults.json degeri kullanilir."
+				},
+				"ykbPrReviewerExtended.prompt.filesRoot": {
+					"type": "string",
+					"default": "",
+					"markdownDescription": "Doluysa workspace override atlanir; yalnizca bu kokten .md okunur. Bos birakildiginda: once workspace (ayni path / ayni dosya adi), yoksa extension icindeki default .md."
+				},
+				"ykbPrReviewerExtended.prompt.files.skillsIntro": {
+					"type": "string",
+					"default": "prompt/skills-intro.md",
+					"markdownDescription": "Prompt icerik dosyasi (filesRoot relatif). Uzun metin JSON yerine .md."
+				},
+				"ykbPrReviewerExtended.prompt.files.skillUsingSuperpowers": {
+					"type": "string",
+					"default": "skills/using-superpowers/SKILL.md",
+					"markdownDescription": "Prompt icerik dosyasi (filesRoot relatif). Uzun metin JSON yerine .md."
+				},
+				"ykbPrReviewerExtended.prompt.files.skillRequesting": {
+					"type": "string",
+					"default": "skills/requesting-code-review/SKILL.md",
+					"markdownDescription": "Prompt icerik dosyasi (filesRoot relatif). Uzun metin JSON yerine .md."
+				},
+				"ykbPrReviewerExtended.prompt.files.skillReviewerTemplate": {
+					"type": "string",
+					"default": "skills/requesting-code-review/code-reviewer.md",
+					"markdownDescription": "Prompt icerik dosyasi (filesRoot relatif). Uzun metin JSON yerine .md."
+				},
+				"ykbPrReviewerExtended.prompt.files.languageRule": {
+					"type": "string",
+					"default": "prompt/language-rule.md",
+					"markdownDescription": "Prompt icerik dosyasi (filesRoot relatif). Uzun metin JSON yerine .md."
+				},
+				"ykbPrReviewerExtended.prompt.files.scopeRule": {
+					"type": "string",
+					"default": "prompt/scope-rule.md",
+					"markdownDescription": "Prompt icerik dosyasi (filesRoot relatif). Uzun metin JSON yerine .md."
+				},
+				"ykbPrReviewerExtended.prompt.files.contextExpansionRule": {
+					"type": "string",
+					"default": "prompt/context-expansion-rule.md",
+					"markdownDescription": "Context expansion kurallari (.md)."
+				},
+				"ykbPrReviewerExtended.prompt.files.ykbDomainRules": {
+					"type": "string",
+					"default": "prompt/ykb-domain-rules.md",
+					"markdownDescription": "Prompt icerik dosyasi (filesRoot relatif). Uzun metin JSON yerine .md."
+				},
+				"ykbPrReviewerExtended.prompt.files.outputFormat": {
+					"type": "string",
+					"default": "prompt/output-format.md",
+					"markdownDescription": "Prompt icerik dosyasi (filesRoot relatif). Uzun metin JSON yerine .md."
+				},
+				"ykbPrReviewerExtended.prompt.files.findingsOnlyFormat": {
+					"type": "string",
+					"default": "prompt/findings-only-format.md",
+					"markdownDescription": "Prompt icerik dosyasi (filesRoot relatif). Uzun metin JSON yerine .md."
+				},
+				"ykbPrReviewerExtended.prompt.files.chunkReminder": {
+					"type": "string",
+					"default": "prompt/chunk-reminder.md",
+					"markdownDescription": "Prompt icerik dosyasi (filesRoot relatif). Uzun metin JSON yerine .md."
+				},
+				"ykbPrReviewerExtended.prompt.files.closingNotes": {
+					"type": "string",
+					"default": "prompt/closing-notes.md",
+					"markdownDescription": "Prompt icerik dosyasi (filesRoot relatif). Uzun metin JSON yerine .md."
+				},
+				"ykbPrReviewerExtended.prompt.files.findingsOnlyChunkNote": {
+					"type": "string",
+					"default": "prompt/findings-only-chunk-note.md",
+					"markdownDescription": "Prompt icerik dosyasi (filesRoot relatif). Uzun metin JSON yerine .md."
+				}
+			}
+		}
+	},
+	"dependencies": {},
+	"devDependencies": {
+		"@types/node": "^20.0.0",
+		"@types/vscode": "^1.90.0",
+		"typescript": "^5.0.0"
+	},
+	"scripts": {
+		"package": "node scripts/package-vsix.js"
+	},
+	"__metadata": {
+		"installedTimestamp": 1789977295818,
+		"targetPlatform": "undefined",
+		"size": 544841
+	}
+}
