@@ -1,3 +1,0 @@
-# Global: SQL migration/script dosyaları graphify corpus dışı
-*.sql
-**/*.sql
